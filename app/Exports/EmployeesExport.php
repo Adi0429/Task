@@ -23,15 +23,18 @@ class EmployeesExport implements FromCollection, WithHeadings, WithStyles
         return ['Name', 'Department', 'Salary'];
     }
 
-    public function styles(Worksheet $sheet)
-    {
-        foreach (range('A', $sheet->getHighestColumn()) as $col) {
-            if ($col === 'C') { // Salary column
-                $sheet->getStyle($col)->getAlignment()->setHorizontal('right');
-            } else {
-                $sheet->getStyle($col)->getAlignment()->setHorizontal('left');
-            }
-        }
-        return [];
-    }
+   public function styles(Worksheet $sheet)
+{
+    
+    $sheet->getStyle($sheet->calculateWorksheetDimension())
+          ->getAlignment()
+          ->setHorizontal('left');
+
+    
+    $sheet->getStyle('C:C')
+          ->getAlignment()
+          ->setHorizontal('right');
+
+    return [];
 }
+
