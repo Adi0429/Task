@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
@@ -8,22 +9,24 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class ExportController extends Controller
 {
+    
     public function exportExcel()
     {
         return Excel::download(new EmployeesExport, 'employees.xlsx');
     }
 
+    
     public function exportPDF()
     {
-        $data = DB::table('employees')->select('name', 'department', 'salary')->get();
-        $columnCount = count((array)$data[0]);
+        $data = DB::table('employees')
+            ->select('name', 'department', 'salary')
+            ->get();
 
-        $fontSize = $columnCount > 5 ? 8 : 12; // Auto adjust size
-        $pdf = Pdf::loadView('pdf.employees', [
-            'data' => $data,
-            'fontSize' => $fontSize
-        ]);
-        return $pdf->download('employees.pdf');
+       
+        $fontSize = ($data->isNotEmpty() && count((array)$data[0]) > 5) ? 8 : 12;
+
+        return Pdf::loadView('pdf.employees', compact('data', 'fontSize'))
+                  ->download('employees.pdf');
     }
 }
 
